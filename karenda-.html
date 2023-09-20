@@ -7,12 +7,29 @@
    <ul>
       <li><a href="./home.html">ホーム</a></li>
    </ul>
-   金額
-   <textarea></textarea>
-   費目
-   <textarea></textarea>
-   日付
-   <textarea></textarea>
-   <textarea></textarea>
+   <form action="" >
+    <dl>
+      <dt>入出費</dt>
+    <dd>
+    <input type="radio" name="okane" value="収入">収入
+    <input type="radio" name="okane" value="出費">出費
+     </dd>
+    
+    
+     <label><dt>金額</dt>
+   <dd><input type="text" pattern="^[1-9][0-9]*$"></dd></label>
+   
+   
+   <label><dt>費目</dt>
+    <dd><input type="text"></dd></label>
+    
+    
+    <dt>日付</dt>
+    <dd><input type="date"><dd>
+    
+    </dl>
+    <button type="sumbmit">保存
+   </form>
+   
  </body>
 </html>
