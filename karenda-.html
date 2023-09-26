@@ -7,29 +7,77 @@
    <ul>
       <li><a href="./home.html">ホーム</a></li>
    </ul>
-   <form action="" >
+   <form action="" id="kiroku" >
     <dl>
+     
+     
       <dt>入出費</dt>
     <dd>
-    <input type="radio" name="purasuokane" value="収入">収入
-    <input type="radio" name="purasuokane" value="出費">出費
+    <input type="radio" id="purasuokane" name="purasuokane" value="収入">収入
+    <input type="radio" id="purasuokane" name="purasuokane" value="出費">出費
      </dd>
     
     
      <label><dt>金額</dt>
-   <dd><input type="text" pattern="^[1-9][0-9]*$" name = "okane"></dd></label>
+   <dd><input type="text" pattern="^[1-9][0-9]*$" id = "okane"></dd></label>
    
    
    <label><dt>費目</dt>
-    <dd><input type="text" name ="text"></dd></label>
+    <dd><input type="text" id ="himoku"></dd></label>
     
     
     <dt>日付</dt>
-    <dd><input type="date" name="text"><dd>
+    <dd><input type="date" id="hiniti"><dd>
     
     </dl>
-    <input type="submit" name="sousin">
+    <input type="submit" id="sousin">
    </form>
+      <!-- 入力内容を表示するための場所 -->
+      <div id="result">
+        <h2>入力内容:</h2>
+        <p id="inputList">入出費: <span id="display_purasuokane"></span></p>
+        <p id="inputList">金額: <span id="display_okane"></span></p>
+        <p id="inputList">費目: <span id="display_himoku"></span></p>
+        <p id="inputList">日付: <span id="display_hiniti"></span></p>
+    </div>
+<!-- JavaScriptでフォーム内容を取得し、表示するコード -->
+<script>
+  const form = document.getElementById('kiroku');
+  const displaypurasuokane = document.getElementById('display_purasuokane');
+  const displayokane = document.getElementById('display_okane');
+  const displayhimoku = document.getElementById('display_himoku');
+  const displayhiniti = document.getElementById('display_hiniti');
+
+  form.addEventListener('submit', function (event) {
+      event.preventDefault(); // ページがリロードされないようにする
+
+      // フォームから入力内容を取得
+      const purasuokane = document.getElementById('purasuokane').value;
+      const okane = document.getElementById('okane').value;
+      const himoku = document.getElementById('himoku').value;
+      const hiniti = document.getElementById('hiniti').value;
+
+      // 入力内容を表示
+      displaypurasuokane.textContent = purasuokane;
+      displayokane.textContent = okane;
+      displayhimoku.textContent = himoku;
+      displayhiniti.textContent = hiniti;
+
+      // 入力内容をローカルストレージに保存
+      localStorage.setItem('savedpurasuokane', purasuokane);
+            localStorage.setItem('savedokane', okane);
+            localStorage.setItem('savedhimoku', himoku);
+            localStorage.setItem('savedhiniti', hiniti);
+
+           // 入力内容を表示リストに追加
+           const listItem = document.createElement('li');
+            listItem.textContent = `入出費: ${purasuokane}, 金額: ${okane},費目:${himoku},日付:${hiniti}`;
+            inputList.appendChild(listItem);
+
+            // フォームをクリア
+            form.reset();
+  });
+</script>
    
  </body>
 </html>

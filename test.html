@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>フォーム入力内容の縦に追加表示</title>
+</head>
+<body>
+    <h1>フォーム入力内容の縦に追加表示</h1>
+
+    <!-- ユーザーに情報を入力してもらうフォーム -->
+    <form id="myForm">
+        <label for="name">名前:</label>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="email">メールアドレス:</label>
+        <input type="email" id="email" name="email"><br><br>
+
+        <input type="submit" value="送信">
+    </form>
+
+    <!-- 入力内容を表示するための場所 -->
+    <div id="result">
+        <h2>入力内容:</h2>
+        <div id="inputList"></div>
+    </div>
+
+    <!-- JavaScriptでフォーム内容を取得し、縦に表示・保存するコード -->
+    <script>
+        const form = document.getElementById('myForm');
+        const inputList = document.getElementById('inputList');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // ページがリロードされないようにする
+
+            // フォームから入力内容を取得
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            // 入力内容を表示リストに追加
+            const resultDiv = document.createElement('div');
+            resultDiv.innerHTML = `<p>名前: ${name}</p><p>メールアドレス: ${email}</p>`;
+            inputList.appendChild(resultDiv);
+
+            // フォームをクリア
+            form.reset();
+        });
+    </script>
+</body>
+</html>
