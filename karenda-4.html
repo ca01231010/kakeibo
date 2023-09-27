@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>家計簿アプリケーション(家計簿)</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a href="./home.html">ホーム</a></li>
+    </ul>
+    <form id="kiroku">
+        <dl>
+            <dt>入出費</dt>
+            <dd>
+                <input type="radio" id="purasuokane" name="purasuokane" value="収入" required>収入
+                <input type="radio" id="purasuokane" name="purasuokane" value="出費" required>出費
+            </dd>
+    
+            <dt>金額</dt>
+            <dd><input type="text" pattern="^[1-9][0-9]*$" id="okane" required></dd>
+   
+            <dt>費目</dt>
+            <dd><input type="text" id="himoku"></dd>
+    
+            <dt>日付</dt>
+            <dd><input type="date" id="hiniti" required></dd>
+        </dl>
+        <input type="submit" id="sousin">
+    </form>
+   
+    <!-- 入力内容を表示するテーブル -->
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>入出費</th>
+                <th>金額</th>
+                <th>費目</th>
+                <th>日付</th>
+            </tr>
+        </thead>
+        <tbody id="inputList">
+            <!-- 入力内容の行はここに追加されます -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" id="totalCell">合計: 0</td>
+            </tr>
+        </tfoot>
+    </table>
+    <!-- JavaScriptでフォーム内容を取得し、表示・保存するコード -->
+    <script>
+
+var total = 0;
+
+
+const form = document.getElementById('kiroku');
+const inputList = document.getElementById('inputList');
+const totalCell = document.getElementById('totalCell'); // 合計セルを特定
+
+form.addEventListener('submit', function (event) {
+    event.preventDefault(); // ページがリロードされないようにする
+
+    // フォームから入力内容を取得
+    const purasuokane = document.querySelector('input[name="purasuokane"]:checked').value;
+    const okane = document.getElementById('okane').value;
+    const himoku = document.getElementById('himoku').value;
+    const hiniti = document.getElementById('hiniti').value;
+
+    // 計算して total に加算または減算
+    var okaneValue = parseFloat(okane);
+    if (!isNaN(okaneValue)) {
+        if (purasuokane === "収入") {
+            total += okaneValue; // 収入の場合、金額を加算
+        } else if (purasuokane === "出費") {
+            total -= okaneValue; // 出費の場合、金額を減算
+        }
+    }
+
+    // 新しい行を作成してテーブルに追加
+    const newRow = inputList.insertRow();
+    const cell1 = newRow.insertCell(0);
+    const cell2 = newRow.insertCell(1);
+    const cell3 = newRow.insertCell(2);
+    const cell4 = newRow.insertCell(3);
+
+    // 入力内容をセルに追加
+    cell1.textContent = purasuokane;
+    cell2.textContent = okane;
+    cell3.textContent = himoku;
+    cell4.textContent = hiniti;
+
+    // フォームをクリア
+    form.reset();
+
+    // 合計セルの数字部分を更新
+    totalCell.textContent = '合計: ' + total;
+});
+
+</script>
+</body>
+</html>
+
