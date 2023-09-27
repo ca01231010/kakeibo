@@ -63,7 +63,7 @@
       displayhimoku.textContent = himoku;
       displayhiniti.textContent = hiniti;
 
-      // 入力内容をローカルストレージに保存
+      入力内容をローカルストレージに保存
       localStorage.setItem('savedpurasuokane', purasuokane);
             localStorage.setItem('savedokane', okane);
             localStorage.setItem('savedhimoku', himoku);
@@ -71,7 +71,7 @@
 
            // 入力内容を表示リストに追加
            const listItem = document.createElement('li');
-            listItem.textContent = `入出費: ${purasuokane}, 金額: ${okane},費目:${himoku},日付:${hiniti}`;
+            listItem.textContent = `<p>入出費: ${purasuokane}</p>, <p>金額: ${okane}</p>,<p>費目:${himoku}</p>,<p>日付:${hiniti}</p>`;
             inputList.appendChild(listItem);
 
             // フォームをクリア

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>家計簿アプリケーション(家計簿)</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a href="./home.html">ホーム</a></li>
+    </ul>
+    <form id="kiroku">
+        <dl>
+            <dt>入出費</dt>
+            <dd>
+                <input type="radio" id="purasuokane" name="purasuokane" value="収入">収入
+                <input type="radio" id="purasuokane" name="purasuokane" value="出費">出費
+            </dd>
+    
+            <dt>金額</dt>
+            <dd><input type="text" pattern="^[1-9][0-9]*$" id="okane"></dd>
+   
+            <dt>費目</dt>
+            <dd><input type="text" id="himoku"></dd>
+    
+            <dt>日付</dt>
+            <dd><input type="date" id="hiniti"></dd>
+        </dl>
+        <input type="submit" id="sousin">
+    </form>
+   
+    <!-- 入力内容を表示するテーブル -->
+    <table>
+        <thead>
+            <tr>
+                <th>入出費</th>
+                <th>金額</th>
+                <th>費目</th>
+                <th>日付</th>
+            </tr>
+        </thead>
+        <tbody id="inputList">
+        </tbody>
+    </table>
+   
+    <!-- JavaScriptでフォーム内容を取得し、表示・保存するコード -->
+    <script>
+        const form = document.getElementById('kiroku');
+        const inputList = document.getElementById('inputList');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // ページがリロードされないようにする
+
+            // フォームから入力内容を取得
+            const purasuokane = document.querySelector('input[name="purasuokane"]:checked').value;
+            const okane = document.getElementById('okane').value;
+            const himoku = document.getElementById('himoku').value;
+            const hiniti = document.getElementById('hiniti').value;
+
+            // 新しい行を作成してテーブルに追加
+            const newRow = inputList.insertRow();
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+            const cell4 = newRow.insertCell(3);
+
+            // 入力内容をセルに追加
+            cell1.textContent = purasuokane;
+            cell2.textContent = okane;
+            cell3.textContent = himoku;
+            cell4.textContent = hiniti;
+
+            // フォームをクリア
+            form.reset();
+        });
+    </script>
+</body>
+</html>
