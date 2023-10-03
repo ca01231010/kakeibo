@@ -63,7 +63,6 @@
 
 var total = 0;
 
-
 const form = document.getElementById('kiroku');
 const inputList = document.getElementById('inputList');
 const totalCell = document.getElementById('totalCell'); // 合計セルを特定
@@ -100,11 +99,39 @@ form.addEventListener('submit', function (event) {
     cell3.textContent = himoku;
     cell4.textContent = hiniti;
 
+    if(purasuokane === "収入"){
+        newRow.style.backgroundColor = 'rgba(0, 0, 255, 0.3)'; // 収入の行の背景色を青に設定
+    } else {
+        newRow.style.backgroundColor = "rgba(255, 0, 0, 0.3)"; // 出費の行の背景を赤に設定
+    }
+
     // フォームをクリア
     form.reset();
 
     // 合計セルの数字部分を更新
     totalCell.textContent = '合計: ' + total;
+    // テーブルのtbody要素を取得
+const tbody = document.getElementById('inputList');
+
+// テーブルの行を取得
+const rows = Array.from(tbody.querySelectorAll('tr'));
+
+// 日付を持つtd要素のインデックスを特定（例: 3は日付のセルのインデックス）
+const dateCellIndex = 3;
+
+// 日付を比較するための比較関数を定義
+function compareDate(a, b) {
+    const dateA = new Date(a.cells[dateCellIndex].textContent);
+    const dateB = new Date(b.cells[dateCellIndex].textContent);
+    return dateA - dateB;
+}
+
+// 行を日付でソート
+rows.sort(compareDate);
+
+// ソートされた行をテーブルに追加
+rows.forEach(row => tbody.appendChild(row));
+
 });
 
 </script>
