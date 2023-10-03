@@ -47,6 +47,7 @@
                 <th>金額</th>
                 <th>費目</th>
                 <th>日付</th>
+                <th>操作</th> <!-- 新しい列を追加して削除ボタンを表示 -->
             </tr>
         </thead>
         <tbody id="inputList">
@@ -58,83 +59,163 @@
             </tr>
         </tfoot>
     </table>
-    <!-- JavaScriptでフォーム内容を取得し、表示・保存するコード -->
+    <button id="clearButton">合計データを削除</button>
+    <!-- JavaScriptでフォーム内容を取得、表示・保存・削除するコード -->
     <script>
+        var total = 0;
 
-var total = 0;
+        const form = document.getElementById('kiroku');
+        const inputList = document.getElementById('inputList');
+        const totalCell = document.getElementById('totalCell');
+        const storageKey = 'kirokuData';
 
-const form = document.getElementById('kiroku');
-const inputList = document.getElementById('inputList');
-const totalCell = document.getElementById('totalCell'); // 合計セルを特定
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem(storageKey);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                total = data.total;
+                totalCell.textContent = '合計: ' + total;
 
-form.addEventListener('submit', function (event) {
-    event.preventDefault(); // ページがリロードされないようにする
-
-    // フォームから入力内容を取得
-    const purasuokane = document.querySelector('input[name="purasuokane"]:checked').value;
-    const okane = document.getElementById('okane').value;
-    const himoku = document.getElementById('himoku').value;
-    const hiniti = document.getElementById('hiniti').value;
-
-    // 計算して total に加算または減算
-    var okaneValue = parseFloat(okane);
-    if (!isNaN(okaneValue)) {
-        if (purasuokane === "収入") {
-            total += okaneValue; // 収入の場合、金額を加算
-        } else if (purasuokane === "出費") {
-            total -= okaneValue; // 出費の場合、金額を減算
+                for (const item of data.items) {
+                    addNewRow(item.purasuokane, item.okane, item.himoku, item.hiniti, item.rowId);
+                }
+            }
         }
-    }
 
-    // 新しい行を作成してテーブルに追加
-    const newRow = inputList.insertRow();
-    const cell1 = newRow.insertCell(0);
-    const cell2 = newRow.insertCell(1);
-    const cell3 = newRow.insertCell(2);
-    const cell4 = newRow.insertCell(3);
+        function addNewRow(purasuokane, okane, himoku, hiniti, rowId) {
+            const newRow = inputList.insertRow();
+            newRow.id = rowId || generateUniqueId(); // 一意のIDを生成
 
-    // 入力内容をセルに追加
-    cell1.textContent = purasuokane;
-    cell2.textContent = okane;
-    cell3.textContent = himoku;
-    cell4.textContent = hiniti;
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+            const cell4 = newRow.insertCell(3);
+            const cell5 = newRow.insertCell(4);
 
-    if(purasuokane === "収入"){
-        newRow.style.backgroundColor = 'rgba(0, 0, 255, 0.3)'; // 収入の行の背景色を青に設定
-    } else {
-        newRow.style.backgroundColor = "rgba(255, 0, 0, 0.3)"; // 出費の行の背景を赤に設定
-    }
+            cell1.textContent = purasuokane;
+            cell2.textContent = okane;
+            cell3.textContent = himoku;
+            cell4.textContent = hiniti;
+            cell5.innerHTML = `<button class="deleteButton" data-row-id="${newRow.id}">削除</button>`;
 
-    // フォームをクリア
-    form.reset();
+            if (purasuokane === "収入") {
+                newRow.style.backgroundColor = 'rgba(0, 0, 255, 0.3)';
+            } else if (purasuokane === "出費") {
+                newRow.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+            }
+        }
 
-    // 合計セルの数字部分を更新
-    totalCell.textContent = '合計: ' + total;
-    // テーブルのtbody要素を取得
-const tbody = document.getElementById('inputList');
+        function generateUniqueId() {
+            return 'row-' + Date.now();
+        }
 
-// テーブルの行を取得
-const rows = Array.from(tbody.querySelectorAll('tr'));
+        loadFromLocalStorage();
 
-// 日付を持つtd要素のインデックスを特定（例: 3は日付のセルのインデックス）
-const dateCellIndex = 3;
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-// 日付を比較するための比較関数を定義
-function compareDate(a, b) {
-    const dateA = new Date(a.cells[dateCellIndex].textContent);
-    const dateB = new Date(b.cells[dateCellIndex].textContent);
-    return dateA - dateB;
-}
+            const purasuokane = document.querySelector('input[name="purasuokane"]:checked').value;
+            const okane = document.getElementById('okane').value;
+            const himoku = document.getElementById('himoku').value;
+            const hiniti = document.getElementById('hiniti').value;
+            // 計算して total に加算または減算
+            var okaneValue = parseFloat(okane);
+            if (!isNaN(okaneValue)) {
+                if (purasuokane === "収入") {
+                    total += okaneValue; // 収入の場合、金額を加算
+                } else if (purasuokane === "出費") {
+                    total -= okaneValue; // 出費の場合、金額を減算
+                }
+            }
 
-// 行を日付でソート
-rows.sort(compareDate);
+            // 新しい行を作成してテーブルに追加
+            addNewRow(purasuokane, okane, himoku, hiniti);
 
-// ソートされた行をテーブルに追加
-rows.forEach(row => tbody.appendChild(row));
+            // フォームをクリア
+            form.reset();
 
-});
+            // 合計セルの数字部分を更新
+            totalCell.textContent = '合計: ' + total;
 
-</script>
+            // 入力データをオブジェクトとして保存
+            const savedData = {
+                total: total,
+                items: []
+            };
+
+            // テーブル内の行データを保存データに追加
+            const rows = inputList.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) { // i=0はヘッダ行なのでスキップ
+                const cells = rows[i].getElementsByTagName('td');
+                const itemData = {
+                    purasuokane: cells[0].textContent,
+                    okane: cells[1].textContent,
+                    himoku: cells[2].textContent,
+                    hiniti: cells[3].textContent,
+                    rowId: rows[i].id // 行の一意のIDも保存
+                };
+                savedData.items.push(itemData);
+            }
+
+            // ローカルストレージに保存
+            localStorage.setItem(storageKey, JSON.stringify(savedData));
+        });
+
+        // 削除ボタンをクリックした時の処理
+        inputList.addEventListener('click', function (event) {
+            if (event.target.classList.contains('deleteButton')) {
+                const rowId = event.target.getAttribute('data-row-id');
+                deleteRowById(rowId);
+            }
+        });
+
+        // IDを持つ行を削除する関数
+        function deleteRowById(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) {
+                const okaneValue = parseFloat(row.cells[1].textContent);
+                if (!isNaN(okaneValue)) {
+                    if (row.cells[0].textContent === "収入") {
+                        total -= okaneValue; // 収入行を削除した場合、金額を減算
+                    } else if (row.cells[0].textContent === "出費") {
+                        total += okaneValue; // 出費行を削除した場合、金額を加算
+                    }
+                    totalCell.textContent = '合計: ' + total; // 合計セルの数字部分を更新
+                }
+                row.remove(); // 行を削除
+                updateLocalStorage(); // ローカルストレージを更新
+            }
+        }
+
+        // ローカルストレージを更新する関数
+        function updateLocalStorage() {
+            const savedData = {
+                total: total,
+                items: []
+            };
+            const rows = inputList.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) { // i=0はヘッダ行なのでスキップ
+                const cells = rows[i].getElementsByTagName('td');
+                const itemData = {
+                    purasuokane: cells[0].textContent,
+                    okane: cells[1].textContent,
+                    himoku: cells[2].textContent,
+                    hiniti: cells[3].textContent,
+                    rowId: rows[i].id
+                };
+                savedData.items.push(itemData);
+            }
+            localStorage.setItem(storageKey, JSON.stringify(savedData));
+        }
+
+        // "データを削除" ボタンをクリックした時の処理
+        const clearButton = document.getElementById('clearButton');
+        clearButton.addEventListener('click', function () {
+            localStorage.removeItem(storageKey); // ローカルストレージからデータを削除
+            inputList.innerHTML = ''; // テーブル内の行を削除
+            total = 0; // 合計をリセット
+            totalCell.textContent = '合計: ' + total; // 合計セルを更新
+        });
+    </script>
 </body>
 </html>
-
