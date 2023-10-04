@@ -208,6 +208,59 @@
             localStorage.setItem(storageKey, JSON.stringify(savedData));
         }
 
+ // フォームの送信ボタンをクリックしたときの処理
+document.getElementById('sousin').addEventListener('click', function (event) {
+    event.preventDefault();
+
+    const category = document.querySelector('input[name="purasuokane"]:checked').value;
+    const okane = parseFloat(document.getElementById('okane').value);
+    const himoku = document.getElementById('himoku').value; // 費目を取得
+    const hiniti = document.getElementById('hiniti').value; // 日付を取得
+
+    const data = {
+        category: category,
+        okane: okane,
+        himoku: himoku, // 費目をデータに追加
+        hiniti: hiniti // 日付をデータに追加
+    };
+
+    const existingData = JSON.parse(localStorage.getItem('karendaData')) || [];
+    existingData.push(data);
+    localStorage.setItem('karendaData', JSON.stringify(existingData));
+
+    addNewRow(category, okane, himoku, hiniti); // テーブルに行を追加
+
+    // フォームをクリア
+    document.getElementById('okane').value = '';
+    document.getElementById('himoku').value = '';
+    document.getElementById('hiniti').value = '';
+});
+
+// フォームに新しい行を追加する関数
+function addNewRow(category, okane, himoku, hiniti) {
+    const newRow = inputList.insertRow();
+    newRow.id = generateUniqueId();
+
+    const cell1 = newRow.insertCell(0);
+    const cell2 = newRow.insertCell(1);
+    const cell3 = newRow.insertCell(2);
+    const cell4 = newRow.insertCell(3);
+    const cell5 = newRow.insertCell(4);
+
+    cell1.textContent = category;
+    cell2.textContent = okane;
+    cell3.textContent = himoku; // 費目
+    cell4.textContent = hiniti; // 日付
+    cell5.innerHTML = `<button class="deleteButton" data-row-id="${newRow.id}">削除</button>`;
+
+    if (category === "収入") {
+        newRow.style.backgroundColor = 'rgba(0, 0, 255, 0.3)';
+    } else if (category === "出費") {
+        newRow.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+    }
+}
+
+
         // "データを削除" ボタンをクリックした時の処理
         const clearButton = document.getElementById('clearButton');
         clearButton.addEventListener('click', function () {

@@ -1,13 +1,47 @@
 <!DOCTYPE html>
 <html>
- <head>
- <title>家計簿アプリケーション</title>
- </head>
- <body>
+<head>
+    <title>家計簿アプリケーション</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.jsライブラリの読み込み -->
+</head>
+<body>
     <div>
         <ul>
-            <li><a href="./karenda-4.html">家計簿</li>
+            <li><a href="./karenda-4.html">家計簿</a></li> <!-- リンクの終了タグを追加 -->
         </ul>
     </div>
- </body>
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <script>
+       // ローカルストレージからデータを読み込む
+const karendaData = JSON.parse(localStorage.getItem('karendaData')) || [];
+
+// グラフのデータを初期化
+const data = {
+    labels: ['収入', '出費'],
+    datasets: [{
+        data: [0, 0], // 初期値を0で設定
+        backgroundColor: ['rgba(0, 0, 255, 0.3)', 'rgba(255, 0, 0, 0.3)']
+    }]
+};
+
+// ローカルストレージから読み込んだデータをグラフのデータに反映
+for (const entry of karendaData) {
+    if (entry.category === '収入') {
+        data.datasets[0].data[0] += entry.okane;
+    } else if (entry.category === '出費') {
+        data.datasets[0].data[1] += entry.okane;
+    }
+}
+
+// グラフを描画する canvas 要素を取得
+const ctx = document.getElementById('myChart').getContext('2d');
+
+// 円グラフを描画
+const myChart = new Chart(ctx, {
+    type: 'pie', // グラフの種類を指定
+    data: data, // グラフのデータを指定
+});
+
+    </script>
+</body>
 </html>
