@@ -7,6 +7,24 @@
 <body>
     <h1>家計簿アプリケーション</h1>
     <a href="./karenda-4.html">家計簿</a>
+    <a href="./mokuhyou.html">目標</a>
+
+    <div id="totalSection">
+        <p>現在の入出費 <span id="totalValue">0</span></p>
+    </div>
+
+    <script>
+        // karenda-4.htmlからローカルストレージ経由で合計を取得して表示
+        const totalValue = document.getElementById('totalValue');
+
+        // ローカルストレージから合計を取得
+        const savedData = localStorage.getItem('kirokuData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            totalValue.textContent = data.total;
+        }
+    </script>
+
 
 </body>
 </html>
