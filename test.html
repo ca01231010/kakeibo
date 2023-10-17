@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>家計簿アプリケーション</title>
+</head>
+<body>
+    <h1>家計簿アプリケーション</h1>
+    <form id="kakeiboForm">
+        <label for="nen">年:</label>
+        <input type="number" id="nen" name="nen" required>
+        <br>
+        <label for="tsuki">月:</label>
+        <input type="number" id="tsuki" name="tsuki" required>
+        <br>
+        <label for="nichi">日:</label>
+        <input type="number" id="nichi" name="nichi" required>
+        <br>
+        <label for="purasuokane">入出費:</label>
+        <select id="purasuokane" name="purasuokane" required>
+            <option value="収入">収入</option>
+            <option value="出費">出費</option>
+        </select>
+        <br>
+        <label for="okane">金額:</label>
+        <input type="number" id="okane" name="okane" required>
+        <br>
+        <label for="himoku">費目:</label>
+        <input type="text" id="himoku" name="himoku">
+        <br>
+        <input type="submit" value="データを送信">
+    </form>
+
+    <script>
+        const form = document.getElementById('kakeiboForm');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nen = document.getElementById('nen').value;
+            const tsuki = document.getElementById('tsuki').value;
+            const nichi = document.getElementById('nichi').value;
+            const purasuokane = document.getElementById('purasuokane').value;
+            const okane = document.getElementById('okane').value;
+            const himoku = document.getElementById('himoku').value;
+
+            const data = {
+                nen: nen,
+                tsuki: tsuki,
+                nichi: nichi,
+                purasuokane: purasuokane,
+                okane: okane,
+                himoku: himoku
+            };
+
+            // サーバーにデータをPOST
+            fetch('/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                alert('データが正常に送信されました。');
+            })
+            .catch(error => {
+                console.error('エラー:', error);
+                alert('データの送信中にエラーが発生しました。');
+            });
+        });
+    </script>
+</body>
+</html>
