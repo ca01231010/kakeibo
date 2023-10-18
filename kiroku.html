@@ -5,6 +5,8 @@
 </head>
 <body>
     <h1>家計簿アプリケーション</h1>
+    <a href="home.html">ホーム</a>
+    <a href="mokuhyou.html">目標</a>
     <form id="kakeiboForm">
         <label for="nen">年:</label>
         <input type="number" id="nen" name="nen" required>
@@ -53,14 +55,19 @@
             };
 
             // サーバーにデータをPOST
-            fetch('/data', {
+            fetch('http://localhost:3000/data', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(result => {
                 console.log(result);
                 alert('データが正常に送信されました。');
@@ -69,6 +76,7 @@
                 console.error('エラー:', error);
                 alert('データの送信中にエラーが発生しました。');
             });
+
         });
     </script>
 </body>
