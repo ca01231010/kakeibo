@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>家計簿アプリケーション</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>家計簿アプリケーション</h1>
+
+    <!-- 年と月の選択フォーム -->
+    <div id="dateSelection">
+        <label for="yearSelect">年:</label>
+        <select id="yearSelect">
+            <!-- 選択肢を動的に生成 -->
+        </select>
+        <label for="monthSelect">月:</label>
+        <select id="monthSelect">
+            <!-- 選択肢を動的に生成 -->
+        </select>
+        <button id="showDataButton">データを表示</button>
+    </div>
+
+    <!-- 家計簿データの表示 -->
+    <div id="dataDisplay">
+        <!-- データをここに表示 -->
+    </div>
+
+    <!-- グラフ表示エリア -->
+    <div id="chartContainer">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        const yearSelect = document.getElementById('yearSelect');
+        const monthSelect = document.getElementById('monthSelect');
+        const showDataButton = document.getElementById('showDataButton');
+        const dataDisplay = document.getElementById('dataDisplay');
+        const chartContainer = document.getElementById('chartContainer');
+
+        // 年の選択肢を生成
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear; year >= currentYear - 10; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.text = year;
+            yearSelect.appendChild(option);
+        }
+
+        // 月の選択肢を生成
+        for (let month = 1; month <= 12; month++) {
+            const option = document.createElement('option');
+            option.value = month;
+            option.text = `${month}月`;
+            monthSelect.appendChild(option);
+        }
+
+        showDataButton.addEventListener('click', () => {
+            const selectedYear = yearSelect.value;
+            const selectedMonth = monthSelect.value;
+            fetchDataAndRefresh(selectedYear, selectedMonth);
+        });
+
+        function fetchDataAndRefresh(year, month) {
+            // データを取得し、表示およびグラフ描画を更新する関数
+            fetch(`/data/monthly?year=${year}&month=${month}`)
+                .then(response => response.json())
+                .then(data => {
+                    // データを表示するコード（dataDisplayにデータを表示）
+                    // グラフを描画するコード
+                    const chartData = {
+                        labels: data.map(item => item.nichi),
+                        datasets: [
+                            {
+                                label: '収入',
+                                data: data.map(item => item.purasuokane === '収入' ? item.okane : 0),
+                                backgroundColor: 'green',
+                            },
+                            {
+                                label: '出費',
+                                data: data.map(item => item.purasuokane === '出費' ? item.okane : 0),
+                                backgroundColor: 'red',
+                            },
+                        ],
+                    };
+
+                    const chartOptions = {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    };
+
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    const myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: chartData,
+                        options: chartOptions,
+                    });
+                })
+                .catch(error => {
+                    console.error('データの取得中にエラーが発生しました:', error);
+                });
+        }
+    </script>
+</body>
+</html>
