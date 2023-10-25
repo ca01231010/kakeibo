@@ -20,13 +20,7 @@
         <button id="showDataButton">データを表示</button>
     </div>
 
-    <!-- 家計簿データの表示 -->
-    <div id="dataDisplay">
-        <!-- データをここに表示 -->
-    </div>
-
-    <!-- グラフ表示エリア -->
-    <div id="chartContainer">
+    <div id="graphContainer">
         <canvas id="myChart"></canvas>
     </div>
 
@@ -34,8 +28,24 @@
         const yearSelect = document.getElementById('yearSelect');
         const monthSelect = document.getElementById('monthSelect');
         const showDataButton = document.getElementById('showDataButton');
-        const dataDisplay = document.getElementById('dataDisplay');
-        const chartContainer = document.getElementById('chartContainer');
+        const graphData = {
+            labels: [
+                '1月', '2月', '3月', '4月', '5月', '6月',
+                '7月', '8月', '9月', '10月', '11月', '12月'
+            ],
+            datasets: [
+                {
+                    label: '収入',
+                    data: [],
+                    backgroundColor: 'green',
+                },
+                {
+                    label: '支出',
+                    data: [],
+                    backgroundColor: 'red',
+                },
+            ],
+        };
 
         // 年の選択肢を生成
         const currentYear = new Date().getFullYear();
@@ -61,46 +71,61 @@
         });
 
         function fetchDataAndRefresh(year, month) {
-            // データを取得し、表示およびグラフ描画を更新する関数
-            fetch(`/data/monthly?year=${year}&month=${month}`)
-                .then(response => response.json())
+            // データを取得し、特定の月のデータを抽出する
+            fetch(`http://localhost:3000/data?year=${year}&month=${month}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    // データを表示するコード（dataDisplayにデータを表示）
-                    // グラフを描画するコード
-                    const chartData = {
-                        labels: data.map(item => item.nichi),
-                        datasets: [
-                            {
-                                label: '収入',
-                                data: data.map(item => item.purasuokane === '収入' ? item.okane : 0),
-                                backgroundColor: 'green',
-                            },
-                            {
-                                label: '出費',
-                                data: data.map(item => item.purasuokane === '出費' ? item.okane : 0),
-                                backgroundColor: 'red',
-                            },
-                        ],
-                    };
-
-                    const chartOptions = {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                            },
-                        },
-                    };
-
-                    const ctx = document.getElementById('myChart').getContext('2d');
-                    const myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: chartData,
-                        options: chartOptions,
+                    // 月ごとのデータを生成
+                    const monthlyData = new Array(12).fill(0);
+                    data.forEach(item => {
+                        const index = item.nichi - 1;
+                        monthlyData[index] += (item.purasuokane === '収入') ? item.okane : -item.okane;
                     });
+
+                    graphData.datasets[0].data = monthlyData.map(amount => (amount > 0) ? amount : 0);
+                    graphData.datasets[1].data = monthlyData.map(amount => (amount < 0) ? -amount : 0); // 支出は正の値に変更
+
+                    refreshChart();
                 })
                 .catch(error => {
                     console.error('データの取得中にエラーが発生しました:', error);
                 });
+        }
+
+        function refreshChart() {
+            // グラフを描画するコード
+            const chartOptions = {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                    },
+                },
+                layout: {
+                    padding: {
+                        left: 20,
+                        right: 20,
+                        top: 20,
+                        bottom: 20,
+                    },
+                },
+            };
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: graphData,
+                options: chartOptions,
+            });
         }
     </script>
 </body>
