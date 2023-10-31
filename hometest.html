@@ -7,16 +7,10 @@
 <body>
     <h1>家計簿アプリケーション</h1>
 
-    <!-- 年と月の選択フォーム -->
+    <!-- 年の入力フォーム -->
     <div id="dateSelection">
-        <label for="yearSelect">年:</label>
-        <select id="yearSelect">
-            <!-- 選択肢を動的に生成 -->
-        </select>
-        <label for="monthSelect">月:</label>
-        <select id="monthSelect">
-            <!-- 選択肢を動的に生成 -->
-        </select>
+        <label for="yearInput">年:</label>
+        <input type="text" id="yearInput" placeholder="年を入力">
         <button id="showDataButton">データを表示</button>
     </div>
 
@@ -25,54 +19,18 @@
     </div>
 
     <script>
-        const yearSelect = document.getElementById('yearSelect');
-        const monthSelect = document.getElementById('monthSelect');
+        const yearInput = document.getElementById('yearInput');
         const showDataButton = document.getElementById('showDataButton');
-        const graphData = {
-            labels: [
-                '1月', '2月', '3月', '4月', '5月', '6月',
-                '7月', '8月', '9月', '10月', '11月', '12月'
-            ],
-            datasets: [
-                {
-                    label: '収入',
-                    data: [],
-                    backgroundColor: 'green',
-                },
-                {
-                    label: '支出',
-                    data: [],
-                    backgroundColor: 'red',
-                },
-            ],
-        };
-
-        // 年の選択肢を生成
-        const currentYear = new Date().getFullYear();
-        for (let year = currentYear; year >= currentYear - 10; year--) {
-            const option = document.createElement('option');
-            option.value = year;
-            option.text = year;
-            yearSelect.appendChild(option);
-        }
-
-        // 月の選択肢を生成
-        for (let month = 1; month <= 12; month++) {
-            const option = document.createElement('option');
-            option.value = month;
-            option.text = `${month}月`;
-            monthSelect.appendChild(option);
-        }
+        let myChart = null; // グローバル変数として myChart を宣言
 
         showDataButton.addEventListener('click', () => {
-            const selectedYear = yearSelect.value;
-            const selectedMonth = monthSelect.value;
-            fetchDataAndRefresh(selectedYear, selectedMonth);
+            const selectedYear = yearInput.value;
+            fetchDataAndRefresh(selectedYear);
         });
 
-        function fetchDataAndRefresh(year, month) {
-            // データを取得し、特定の月のデータを抽出する
-            fetch(`http://localhost:3000/data?year=${year}&month=${month}`)
+        function fetchDataAndRefresh(year) {
+            // サーバーサイドのエンドポイントを修正
+            fetch(`http://localhost:3000/data?year=${year}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -80,25 +38,32 @@
                     return response.json();
                 })
                 .then(data => {
-                    // 月ごとのデータを生成
-                    const monthlyData = new Array(12).fill(0);
-                    data.forEach(item => {
-                        const index = item.nichi - 1;
-                        monthlyData[index] += (item.purasuokane === '収入') ? item.okane : -item.okane;
-                    });
-
-                    graphData.datasets[0].data = monthlyData.map(amount => (amount > 0) ? amount : 0);
-                    graphData.datasets[1].data = monthlyData.map(amount => (amount < 0) ? -amount : 0); // 支出は正の値に変更
-
-                    refreshChart();
+                    refreshGraphWithData(data);
                 })
                 .catch(error => {
                     console.error('データの取得中にエラーが発生しました:', error);
                 });
         }
 
-        function refreshChart() {
-            // グラフを描画するコード
+        function refreshGraphWithData(data) {
+            const monthlyIncome = Array.from({ length: 12 }, () => 0);
+            const monthlyExpense = Array.from({ length: 12 }, () => 0);
+
+            data.forEach(item => {
+                const month = item.tsuki;
+                if (item.purasuokane === '収入') {
+                    monthlyIncome[month - 1] += item.okane;
+                } else {
+                    monthlyExpense[month - 1] += item.okane;
+                }
+            });
+
+            // 既存のチャートを破棄
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            // 新しいチャートを描画
             const chartOptions = {
                 scales: {
                     y: {
@@ -121,9 +86,26 @@
             };
 
             const ctx = document.getElementById('myChart').getContext('2d');
-            const myChart = new Chart(ctx, {
+            myChart = new Chart(ctx, {
                 type: 'bar',
-                data: graphData,
+                data: {
+                    labels: [
+                        '1月', '2月', '3月', '4月', '5月', '6月',
+                        '7月', '8月', '9月', '10月', '11月', '12月'
+                    ],
+                    datasets: [
+                        {
+                            label: '収入',
+                            data: monthlyIncome,
+                            backgroundColor: 'green',
+                        },
+                        {
+                            label: '支出',
+                            data: monthlyExpense,
+                            backgroundColor: 'red',
+                        },
+                    ],
+                },
                 options: chartOptions,
             });
         }
