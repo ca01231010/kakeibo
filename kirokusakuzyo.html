@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>データベースデータ削除</title>
+</head>
+<body>
+    <h1>データベースデータ削除</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>年</th>
+                <th>月</th>
+                <th>日</th>
+                <th>プラス・マイナス</th>
+                <th>金額</th>
+                <th>用途</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="dataList">
+            <!-- データベースから取得したデータがここに表示されます -->
+        </tbody>
+    </table>
+
+    <script>
+        // データを取得して表示する関数
+        function fetchDataAndDisplay() {
+            fetch('http://localhost:3000/data')
+                .then(response => response.json())
+                .then(data => {
+                    const dataList = document.getElementById('dataList');
+                    dataList.innerHTML = ''; // データのリストをクリア
+
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.id}</td>
+                            <td>${item.nen}</td>
+                            <td>${item.tsuki}</td>
+                            <td>${item.nichi}</td>
+                            <td>${item.purasuokane}</td>
+                            <td>${item.okane}</td>
+                            <td>${item.himoku}</td>
+                            <td><button onclick="deleteData(${item.id})">削除</button></td>
+                        `;
+                        dataList.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('データの取得中にエラーが発生しました:', error);
+                });
+        }
+
+        // データを削除する関数
+        function deleteData(id) {
+    console.log('ボタンがクリックされました'); // デバッグ用
+    fetch(`http://localhost:3000/data/${id}`, { method: 'DELETE' })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            fetchDataAndDisplay(); // データを削除した後、データを再表示
+        })
+        .catch(error => {
+            console.error('データの削除中にエラーが発生しました:', error);
+        });
+}
+
+        // ページ読み込み時にデータを取得して表示
+        fetchDataAndDisplay();
+    </script>
+</body>
+</html>

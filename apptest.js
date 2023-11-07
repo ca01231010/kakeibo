@@ -10,13 +10,13 @@ app.use(cors());
 const db = new sqlite3.Database('mydatabase.db');
 
 db.serialize(function () {
-    db.run("CREATE TABLE IF NOT EXISTS kakeibo (id INTEGER PRIMARY KEY, nen INT, tsuki INT, nichi INT, purasuokane TEXT, okane REAL, himoku TEXT)");
+    db.run("CREATE TABLE IF NOT EXISTS kakeibo (id INTEGER PRIMARY KEY AUTOINCREMENT, nen INT, tsuki INT, nichi INT, purasuokane TEXT, okane REAL, himoku TEXT)");
 });
 
 app.use(express.json());
 
 app.get('/data', (req, res) => {
-    db.all("SELECT nen, tsuki, nichi, purasuokane, okane, himoku FROM kakeibo", (err, rows) => {
+    db.all("SELECT id, nen, tsuki, nichi, purasuokane, okane, himoku FROM kakeibo", (err, rows) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
@@ -29,7 +29,7 @@ app.get('/data/monthly', (req, res) => {
     const year = req.query.year;
     const month = req.query.month;
 
-    db.all("SELECT nen, tsuki, nichi, purasuokane, okane, himoku FROM kakeibo WHERE nen = ? AND tsuki = ?", [year, month], (err, rows) => {
+    db.all("SELECT id, nen, tsuki, nichi, purasuokane, okane, himoku FROM kakeibo WHERE nen = ? AND tsuki = ?", [year, month], (err, rows) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
@@ -52,4 +52,16 @@ app.post('/data', (req, res) => {
 
 app.listen(port, () => {
     console.log(`サーバーがポート ${port} で起動しました。`);
+});
+
+// データの削除
+app.delete('/data/:id', (req, res) => {
+    const id = req.params.id;
+    db.run("DELETE FROM kakeibo WHERE id = ?", id, function (err) {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            res.json({ message: 'データを削除しました。' });
+        }
+    });
 });
