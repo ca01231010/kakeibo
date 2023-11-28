@@ -77,7 +77,7 @@
                     <td>${i + 1}月</td>
                     <td>${income}</td>
                     <td>${expense}</td>
-                    <td>${difference}</td>
+                    <td style="color: ${difference >= 0 ? 'blue' : 'red'}">${difference}</td>
                 `;
                 incomeExpenseDifferenceList.appendChild(row);
             }
