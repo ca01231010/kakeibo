@@ -6,7 +6,8 @@
 </head>
 <body>
     <h1>家計簿アプリケーション</h1>
-
+    <a href="./kiroku.html">家計簿</a>
+    <a href="./kirokusakuzyo.html">記録削除</a>
     <!-- 年の入力フォーム -->
     <div id="dateSelection">
         <label for="yearInput">年:</label>
@@ -18,10 +19,28 @@
         <canvas id="myChart"></canvas>
     </div>
 
+    <!-- 月の収入と支出の差表示エリア -->
+    <div id="incomeExpenseDifference">
+        <h2>月の収入と支出の差</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>月</th>
+                    <th>収入</th>
+                    <th>支出</th>
+                    <th>差分</th>
+                </tr>
+            </thead>
+            <tbody id="incomeExpenseDifferenceList">
+                <!-- 月の収入と支出の差がここに表示されます -->
+            </tbody>
+        </table>
+    </div>
+
     <script>
         const yearInput = document.getElementById('yearInput');
         const showDataButton = document.getElementById('showDataButton');
-        let myChart = null; // グローバル変数として myChart を宣言
+        let myChart = null;
 
         showDataButton.addEventListener('click', () => {
             const selectedYear = yearInput.value;
@@ -29,7 +48,6 @@
         });
 
         function fetchDataAndRefresh(year) {
-            // サーバーサイドのエンドポイントを修正
             fetch(`http://localhost:3000/data?year=${year}`)
                 .then(response => {
                     if (!response.ok) {
@@ -45,6 +63,26 @@
                 });
         }
 
+        function showIncomeExpenseDifference(monthlyIncome, monthlyExpense) {
+            const incomeExpenseDifferenceList = document.getElementById('incomeExpenseDifferenceList');
+            incomeExpenseDifferenceList.innerHTML = '';
+
+            for (let i = 0; i < monthlyIncome.length; i++) {
+                const income = monthlyIncome[i];
+                const expense = monthlyExpense[i];
+                const difference = income - expense;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${i + 1}月</td>
+                    <td>${income}</td>
+                    <td>${expense}</td>
+                    <td>${difference}</td>
+                `;
+                incomeExpenseDifferenceList.appendChild(row);
+            }
+        }
+
         function refreshGraphWithData(data) {
             const monthlyIncome = Array.from({ length: 12 }, () => 0);
             const monthlyExpense = Array.from({ length: 12 }, () => 0);
@@ -58,12 +96,10 @@
                 }
             });
 
-            // 既存のチャートを破棄
             if (myChart) {
                 myChart.destroy();
             }
 
-            // 新しいチャートを描画
             const chartOptions = {
                 scales: {
                     y: {
@@ -108,6 +144,8 @@
                 },
                 options: chartOptions,
             });
+
+            showIncomeExpenseDifference(monthlyIncome, monthlyExpense);
         }
     </script>
 </body>
