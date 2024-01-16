@@ -1,0 +1,79 @@
+@charset "UTF-8";
+h1 {
+    font-family: "Sawarabi Mincho";
+    text-align: center;
+    border-bottom: 1px solid #000000; /* 下部にボーダーを追加 */
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #cccccc;
+}
+
+ul li {
+    flex: 1; /* 幅を均等に分割 */
+    border-right: 1px solid #000000; /* 各リストアイテムの右側にボーダーを追加 */
+    text-align: center; /* テキストを中央寄せに */
+}
+
+ul li:last-child {
+    border-right: none; /* 最後のリストアイテムに右側のボーダーを削除 */
+}
+
+ul li a {
+    display: block;
+    padding: 10px 0; /* パディングの値を変更 */
+    text-decoration: none; /* リンクのアンダーラインを削除 */
+    color: #000000; /* テキストの色を指定 */
+}
+
+ul li a:hover {
+    background-color: #999999; /* ホバー時の背景色を指定 */
+}
+
+#dateSelection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px; /* h1要素とのスペースを確保するためにマージンを追加 */
+}
+
+label {
+    margin-bottom: 10px; /* ラベルの下にマージンを追加 */
+}
+
+#yearInput {
+    width: 200px; /* 入力フィールドの幅を設定 */
+    padding: 5px; /* 見た目を良くするためにパディングを追加 */
+}
+
+#showDataButton {
+    margin-top: 10px; /* ボタンの上にマージンを追加 */
+    padding: 8px 15px; /* 見た目を良くするためにパディングを追加 */
+}
+#incomeExpenseDifference {
+    text-align: center; /* 要素内のテキストを中央に配置 */
+    margin-top: 20px; /* h2要素とのスペースを確保するためにマージンを追加 */
+}
+
+#incomeExpenseDifference table {
+    width: 100%; /* テーブルの幅を100%に設定 */
+    border-collapse: collapse; /* セルのボーダーを重ねないようにする */
+    margin-top: 10px; /* テーブル上部にマージンを追加 */
+}
+
+#incomeExpenseDifference th, #incomeExpenseDifference td {
+    padding: 8px; /* セル内の要素にパディングを追加 */
+    border: 1px solid #ddd; /* セルのボーダーを追加 */
+}
+
+#incomeExpenseDifference th {
+    background-color: #f2f2f2; /* ヘッダーの背景色を指定 */
+}
+
+#incomeExpenseDifference td {
+    text-align: center; /* セル内のテキストを中央に配置 */
+}

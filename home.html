@@ -3,15 +3,18 @@
 <head>
     <title>家計簿アプリケーションホーム</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
     <h1>家計簿アプリケーション</h1>
-    <a href="./kiroku.html">家計簿</a>
-    <a href="./kirokusakuzyo.html">記録削除</a>
+    <ul>
+    <li><a href="./kiroku.html">家計簿</a></li>
+    <li><a href="./kirokusakuzyo.html">記録削除</a></li>
+    </ul>
     <!-- 年の入力フォーム -->
 <!-- 年の入力フォーム -->
 <div id="dateSelection">
-    <label for="yearInput">年:</label>
+    <label for="yearInput">年を入力してください</label>
     <input type="number" id="yearInput" placeholder="年を入力">
     <button id="showDataButton">データを表示</button>
 </div>

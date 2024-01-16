@@ -1,0 +1,100 @@
+@charset "UTF-8";
+h1 {
+    font-family: "Sawarabi Mincho";
+    text-align: center;
+    border-bottom: 1px solid #000000; /* 下部にボーダーを追加 */
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #cccccc;
+}
+
+ul li {
+    flex: 1; /* 幅を均等に分割 */
+    border-right: 1px solid #000000; /* 各リストアイテムの右側にボーダーを追加 */
+    text-align: center; /* テキストを中央寄せに */
+}
+
+ul li:last-child {
+    border-right: none; /* 最後のリストアイテムに右側のボーダーを削除 */
+}
+
+ul li a {
+    display: block;
+    padding: 10px 0; /* パディングの値を変更 */
+    text-decoration: none; /* リンクのアンダーラインを削除 */
+    color: #000000; /* テキストの色を指定 */
+}
+
+ul li a:hover {
+    background-color: #999999; /* ホバー時の背景色を指定 */
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    border-bottom: 1px solid #000;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #ccc;
+}
+
+ul li {
+    flex: 1;
+    border-right: 1px solid #000;
+    text-align: center;
+}
+
+ul li:last-child {
+    border-right: none;
+}
+
+ul li a {
+    display: block;
+    padding: 10px 0;
+    text-decoration: none;
+    color: #000;
+}
+
+ul li a:hover {
+    background-color: #999;
+}
+
+#kakeiboForm {
+    max-width: 400px; /* フォームの最大幅を設定 */
+    margin: 20px auto; /* フォームを中央に配置 */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+}
+

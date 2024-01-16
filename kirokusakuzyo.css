@@ -1,7 +1,94 @@
 @charset "UTF-8";
 h1 {
-    font-family : "Sawarabi Mincho";
-    text-align : center;
-    background-color :aqua;
+    font-family: "Sawarabi Mincho";
+    text-align: center;
+    border-bottom: 1px solid #000000; /* 下部にボーダーを追加 */
 }
 
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #cccccc;
+}
+
+ul li {
+    flex: 1; /* 幅を均等に分割 */
+    border-right: 1px solid #000000; /* 各リストアイテムの右側にボーダーを追加 */
+    text-align: center; /* テキストを中央寄せに */
+}
+
+ul li:last-child {
+    border-right: none; /* 最後のリストアイテムに右側のボーダーを削除 */
+}
+
+ul li a {
+    display: block;
+    padding: 10px 0; /* パディングの値を変更 */
+    text-decoration: none; /* リンクのアンダーラインを削除 */
+    color: #000000; /* テキストの色を指定 */
+}
+
+ul li a:hover {
+    background-color: #999999; /* ホバー時の背景色を指定 */
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    border-bottom: 1px solid #000;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #ccc;
+}
+
+ul li {
+    flex: 1;
+    border-right: 1px solid #000;
+    text-align: center;
+}
+
+ul li:last-child {
+    border-right: none;
+}
+
+ul li a {
+    display: block;
+    padding: 10px 0;
+    text-decoration: none;
+    color: #000;
+}
+
+ul li a:hover {
+    background-color: #999;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead th, tbody td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+thead th {
+    background-color: #f2f2f2;
+}
+
+tbody td button {
+    padding: 5px 10px;
+}
